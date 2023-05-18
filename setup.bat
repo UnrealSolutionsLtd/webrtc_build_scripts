@@ -27,4 +27,4 @@ curl -L https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win
 
 export PATH=`pwd`/ninja_install:$PATH
 
-gn gen --ide=vs2019 out/Release_4664 --args="build_with_chromium=false use_rtti=true is_clang=false rtc_build_tools=false rtc_include_tests=false rtc_build_examples=false rtc_build_ssl=0 is_debug=false rtc_enable_protobuf=false use_lld=false rtc_include_internal_audio_device=false target_cpu=\"x64\" rtc_ssl_root=<SSL_PATH>"
+gn gen --ide=vs2019 out/Release_4664 --args="use_rtti=true enable_iterator_debugging=true is_clang=false use_custom_libcxx=false libcxx_is_shared=true enable_iterator_debugging=true enable_libaom=false rtc_build_tools=false rtc_include_tests=false rtc_build_examples=false rtc_build_ssl=false is_debug=false rtc_enable_protobuf=false use_lld=false rtc_include_internal_audio_device=false target_cpu=\"x64\" rtc_ssl_root=<>"
