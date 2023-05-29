@@ -62,7 +62,7 @@ rtc::SetCurrentThreadName
 ``` 
 
 
-#### 3. Remove `PlatformThread(Handle handle, bool joinable);` if it is present in `<WEBRTC_CHECKOUT_DIR>/src/rtc_library/platform_thread.h`
+#### 3. Remove `PlatformThread(Handle handle, bool joinable);` if it is present in `<WEBRTC_CHECKOUT_DIR>/src/rtc_base/platform_thread.h`
 
 #### 4. Add `defines += ["DISABLE_H265", "RTC_DISABLE_LOGGING"]` to `<WEBRTC_CHECKOUT_DIR>/src/BUILD.gn` (to the block `config("common_inherited_config")`)
 
