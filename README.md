@@ -172,7 +172,7 @@ Copy the *openssl* directory from `<UNREAL_ENGINE_5.1.1_DIR>\Engine\Source\Third
 
 #### 9. Enable ffmpeg unsafe atomics (only for H264 codec)
 
-Go src\third_party\ffmpeg\BUILD.gn and set ffmpeg_use_unsafe_atomics to true
+Go src\third_party\ffmpeg\ffmpeg_options.gni and set ffmpeg_use_unsafe_atomics to true
 
 
 Provide `<UNREAL_ENGINE_5.1.1_DIR>\Engine\Source\ThirdParty\OpenSSL\1.1.1n\include\Win64\VS2015` when generating project files & compiling (next section).
