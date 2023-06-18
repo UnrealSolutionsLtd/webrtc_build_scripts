@@ -170,6 +170,10 @@ Copy the *openssl* directory from `<UNREAL_ENGINE_5.1.1_DIR>\Engine\Source\Third
 - `<WEBRTC_CHECKOUT_DIR>\src\third_party\libsrtp\crypto\include`
 - `<WEBRTC_CHECKOUT_DIR>\src\third_party\usrsctp\usrsctplib\usrsctplib`
 
+#### 9. Enable ffmpeg unsafe atomics (only for H264 codec)
+
+Go src\third_party\ffmpeg\BUILD.gn and set ffmpeg_use_unsafe_atomics to true
+
 
 Provide `<UNREAL_ENGINE_5.1.1_DIR>\Engine\Source\ThirdParty\OpenSSL\1.1.1n\include\Win64\VS2015` when generating project files & compiling (next section).
 
