@@ -194,7 +194,7 @@ Go src\third_party\ffmpeg\ffmpeg_options.gni and set `ffmpeg_use_unsafe_atomics`
 
 #### Patch code
 
-Find all `#error "See: bugs.webrtc.org/9213#c13."` and comment them.
+TODO
 
 #### Hardware accelerated h264 codec (ffmpeg nvenc)
 
