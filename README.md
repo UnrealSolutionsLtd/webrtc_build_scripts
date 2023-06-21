@@ -170,7 +170,7 @@ Copy the *openssl* directory from `<UNREAL_ENGINE_5.1.1_DIR>\Engine\Source\Third
 - `<WEBRTC_CHECKOUT_DIR>\src\third_party\libsrtp\crypto\include`
 - `<WEBRTC_CHECKOUT_DIR>\src\third_party\usrsctp\usrsctplib\usrsctplib`
 
-#### 9. Enable ffmpeg unsafe atomics (only for H264 codec)
+#### 9. Enable ffmpeg unsafe atomics (only for H264 software codec)
 
 Go src\third_party\ffmpeg\ffmpeg_options.gni and set `ffmpeg_use_unsafe_atomics` to true
 
@@ -184,7 +184,7 @@ Provide `<UNREAL_ENGINE_5.1.1_DIR>\Engine\Source\ThirdParty\OpenSSL\1.1.1n\inclu
 ```
 // Compile via VS 2019 
 // Working solution for M96
-// Note: h264 codec is not needed as Unreal provides its own solution (via nvenc)
+// Note: h264 codec is not needed as Unreal provides custom one (nvenc)
 // non-clang is not tested!
 // provide path to Unreal Engine 5.1 OpenSSL includes!
 // Add PublicDefinitions.Add("DISABLE_H265=1") to WebRTC.Build.cs (Unreal Engine codebase)
