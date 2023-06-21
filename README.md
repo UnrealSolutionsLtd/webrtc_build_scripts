@@ -190,7 +190,7 @@ Provide `<UNREAL_ENGINE_5.1.1_DIR>\Engine\Source\ThirdParty\OpenSSL\1.1.1n\inclu
 
 #### Enable ffmpeg unsafe atomics
 
-Go src\third_party\ffmpeg\ffmpeg_options.gni and set `ffmpeg_use_unsafe_atomics` to true or simply provide `ffmpeg_use_unsafe_atomics=true` to `gn gen` command (next section).
+Go `src\third_party\ffmpeg\ffmpeg_options.gni` and set `ffmpeg_use_unsafe_atomics` to `true` or simply provide `ffmpeg_use_unsafe_atomics=true` to `gn gen` command (next section).
 
 #### Patch code
 
