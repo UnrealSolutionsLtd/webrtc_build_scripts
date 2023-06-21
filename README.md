@@ -213,8 +213,9 @@ Compiling via Ninja:
 
 
 
-Hint: Main cause of runtime errors (i.e. copy contructor/asssignment operator) -> Misalignment between size of VideoCodec structure in headers and compiled static library.  Adding PublicDefinitions.Add("DISABLE_H265=1") to WebRTC.build.cs helped to resolve the runtime errors.
+*Hint*: Main cause of runtime errors (i.e. copy contructor/asssignment operator) -> Misalignment between size of VideoCodec structure in headers and compiled static library.  Adding PublicDefinitions.Add("DISABLE_H265=1") to WebRTC.build.cs helped to resolve the runtime errors.
 
+Now Unreal webrtc.lib file can be replaced with compiled one!
 
 
 # Work log (can be used as a reference)
