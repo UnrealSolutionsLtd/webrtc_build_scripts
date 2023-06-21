@@ -184,30 +184,25 @@ Copy the *openssl* directory from `<UNREAL_ENGINE_5.1.1_DIR>\Engine\Source\Third
 - `<WEBRTC_CHECKOUT_DIR>\src\third_party\libsrtp\crypto\include`
 - `<WEBRTC_CHECKOUT_DIR>\src\third_party\usrsctp\usrsctplib\usrsctplib`
 
-#### 8. Enable ffmpeg unsafe atomics (only for H264 software codec)
-
-Go src\third_party\ffmpeg\ffmpeg_options.gni and set `ffmpeg_use_unsafe_atomics` to true
-
 Provide `<UNREAL_ENGINE_5.1.1_DIR>\Engine\Source\ThirdParty\OpenSSL\1.1.1n\include\Win64\VS2015` when generating project files & compiling (next section).
 
-#### 9. Disable obsolete codecs in ffmpeg module
+### H264 Codec (Software only)
 
-Comment out the following lines in `libavcodec/pcm.c`:
-```
--PCM_CODEC  (PCM_VIDC,         AV_SAMPLE_FMT_S16, pcm_vidc,         "PCM Archimedes VIDC");
--PCM_DECODER(PCM_SGA,          AV_SAMPLE_FMT_U8,  pcm_sga,          "PCM SGA");
-INIT_ONCE(VIDC,  vidc)
-```
+#### Enable ffmpeg unsafe atomics
 
-and all usages of `ff_theora_decoder` and `ff_vp3_decoder` 
+Go src\third_party\ffmpeg\ffmpeg_options.gni and set `ffmpeg_use_unsafe_atomics` to true or simply provide `ffmpeg_use_unsafe_atomics=true` to `gn gen` command (next section).
+
+#### Hardware accelerated h264 codec (ffmpeg nvenc)
+
+TODO
 
 
 # Generating project files & Compiling
 
+## Compiling via Visual Studio 2019
 
-Compiling via Visual Studio 2019:
+Working solution for M96 (webrtc branch 4664):
 ```
-// Working solution for M96
 // Note: h264 codec is not compiled as Unreal provides custom one (nvenc)
 // non-clang is not tested!
 // provide path to Unreal Engine 5.1 OpenSSL includes!
