@@ -221,6 +221,8 @@ Compiling via Ninja:
 ```ninja -C out/release_no_h264```
 
 
+For h264 support:
+```gn gen  --ide=vs2019 out/Release_4664_h264_support_ffmpeg_unsafe_atomics --args="target_winuwp_family=\"desktop\" is_component_build=false rtc_include_tests=false rtc_use_h264=true use_rtti=true enable_google_benchmarks=false rtc_disable_logging=true treat_warnings_as_errors=false is_clang=true rtc_include_ilbc=false use_custom_libcxx=false rtc_build_ssl=false is_debug=false rtc_enable_protobuf=false rtc_build_examples=false use_lld=false rtc_include_internal_audio_device=false rtc_builtin_ssl_root_certificates=false enable_libaom=false target_cpu=\"x64\" rtc_ssl_root=\"E:\mawari_workspace\UnrealEngine-5.1.1-release\Engine\Source\ThirdParty\OpenSSL\1.1.1n\include\Win64\VS2015\""```
 
 
 *Hint*: Main cause of runtime errors (i.e. copy contructor/asssignment operator) -> Misalignment between size of VideoCodec structure in headers and compiled static library. Adding `PublicDefinitions.Add("DISABLE_H265=1")` to WebRTC.build.cs helped to resolve the runtime errors.
