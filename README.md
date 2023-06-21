@@ -57,17 +57,28 @@ Now go to out/release_no_h264 and open `all.sln ` in Visual Studio 2019!
 
 First step is make webrtc code "compatible" with Unreal engine. 
 
-#### 1. Copy all WebRTC includes from Unreal Engine 5.1.1 directory to `<WEBRTC_CHECKOUT_DIR>/src` with replacement(!).
+#### 1. Copy WebRTC includes
 
-#### 2. In `<WEBRTC_CHECKOUT_DIR>/src/rtc_library/platform_thread.cc` comment out all usages of:
+Copy all WebRTC includes from Unreal Engine 5.1.1 directory (from thirdparty) to `<WEBRTC_CHECKOUT_DIR>/src` with replacement(!).
+
+#### 2. WebRTC codebase fixes
+
+In `<WEBRTC_CHECKOUT_DIR>/src/rtc_library/platform_thread.cc` comment out all usages of:
 ```
 SetThreadPriority
 SetPriority
 rtc::SetCurrentThreadName
 ``` 
 
-#### 3. Add `defines += ["DISABLE_H265", "RTC_DISABLE_LOGGING"]` to `<WEBRTC_CHECKOUT_DIR>/src/BUILD.gn` (to the block `config("common_inherited_config")`)
+In `platform_thread.h` replace the following line `PlatformThread(Handle handle, bool joinable, const absl::string_view& name, std::unique_ptr<PlatformThread>&& personal_id);` 
+with
+`PlatformThread(Handle handle, bool joinable);`
 
+In each `RTCOutboundRTPStreamStats` constructor method initialize `avg_send_delay` member variable (set it to 0).
+
+#### 3. Patch webrtc BUILD.gn
+
+Add `defines += ["DISABLE_H265", "RTC_DISABLE_LOGGING"]` to `<WEBRTC_CHECKOUT_DIR>/src/BUILD.gn`, to the block `config("common_inherited_config")`
 
 #### 4. Modify compiler switches:
 - Edit *build\config\win\BUILD.gn*:
