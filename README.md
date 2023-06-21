@@ -32,7 +32,7 @@ gclient sync --nohooks
 
 cd src
 git fetch --all
-git checkout -b head_9664 refs/remotes/branch-heads/9664
+git checkout -b head_4664 refs/remotes/branch-heads/4664
 
 gclient sync --nohooks
 
