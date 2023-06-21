@@ -41,14 +41,19 @@ gclient runhooks
 ```
 
 
-## Generating project files
+## Generating & compiling project 
 
-Define toolchain variable: `SET DEPOT_TOOLS_WIN_TOOLCHAIN=0`
+Define environment variable: `SET DEPOT_TOOLS_WIN_TOOLCHAIN=0`
+
+To generate standalone webrtc.lib (won't be compatible with Unreal!):
+```gn gen  --ide=vs2019 out/release_no_h264 --args="target_winuwp_family=\"desktop\" is_component_build=false rtc_include_tests=false rtc_use_h264=false use_rtti=true enable_google_benchmarks=false rtc_disable_logging=true treat_warnings_as_errors=false is_clang=true rtc_include_ilbc=false use_custom_libcxx=false is_debug=false rtc_enable_protobuf=false rtc_build_examples=false use_lld=false rtc_include_internal_audio_device=false enable_libaom=false target_cpu=\"x64\""```
+
+Now go to out/release_no_h264 and open `all.sln ` in Visual Studio 2019!
 
 **Note**: All gn gen <...> commands must be called from within `<WEBRTC_CHECKOUT_DIR>/src`
 
 
-### Patch the Code
+### Patch the Code (to use webrtc.lib in Unreal)
 
 First step is make webrtc code "compatible" with Unreal engine. 
 
@@ -61,17 +66,14 @@ SetPriority
 rtc::SetCurrentThreadName
 ``` 
 
-
-#### 3. Remove `PlatformThread(Handle handle, bool joinable);` if it is present in `<WEBRTC_CHECKOUT_DIR>/src/rtc_base/platform_thread.h`
-
-#### 4. Add `defines += ["DISABLE_H265", "RTC_DISABLE_LOGGING"]` to `<WEBRTC_CHECKOUT_DIR>/src/BUILD.gn` (to the block `config("common_inherited_config")`)
+#### 3. Add `defines += ["DISABLE_H265", "RTC_DISABLE_LOGGING"]` to `<WEBRTC_CHECKOUT_DIR>/src/BUILD.gn` (to the block `config("common_inherited_config")`)
 
 
-#### 5. Modify compiler switches:
+#### 4. Modify compiler switches:
 - Edit *build\config\win\BUILD.gn*:
   - Change all `/MT` to `/MD`, and `/MTd` to `/MDd`.
   - Change all `cflags = [ "/MDd" ]` to `[ "/MDd", "-D_ITERATOR_DEBUG_LEVEL=2", "-D_HAS_ITERATOR_DEBUGGING=1" ]`.
-- Edit *build\config\compiler\BUILD.gn*:\
+- Edit *build\config\compiler\BUILD.gn*:
   Change:
   ```
     if (is_win) {
@@ -91,7 +93,7 @@ rtc::SetCurrentThreadName
       }
   ```
 
-#### 6. Modify abseil-cpp
+#### 5. Modify abseil-cpp
 
 Go to `<WEBRTC_CHECKOUT_DIR>\src\third_party\abseil-cpp\absl\base\options.h` and redefine the following constants:
 ```
@@ -102,10 +104,11 @@ Go to `<WEBRTC_CHECKOUT_DIR>\src\third_party\abseil-cpp\absl\base\options.h` and
 ```
 
 
-#### 7. Exclude BoringSSL
+#### 6. Exclude BoringSSL
 Unreal OpenSSL will be used when linking WebRTC static library.
 The following patches are needed even though SSL is excluded in the `gn gen` build commands.
-- Edit *third_party\libsrtp\BUILD.gn:\
+
+- Edit *third_party\libsrtp\BUILD.gn:
   Change:
   ```
   public_deps = [
@@ -119,7 +122,7 @@ The following patches are needed even though SSL is excluded in the `gn gen` bui
   ]
   ```
 
-- Edit *third_party\usrsctp\BUILD.gn*:\
+- Edit *third_party\usrsctp\BUILD.gn*:
   Change:
   ```
   deps = [ "//third_party/boringssl" ]
@@ -130,7 +133,7 @@ The following patches are needed even though SSL is excluded in the `gn gen` bui
     # "//third_party/boringssl"
   ]
   ```
-- Edit *base\BUILD.gn*:\
+- Edit *base\BUILD.gn*:
   In the code under:
   ```
   # Use the base implementation of hash functions when building for
@@ -145,7 +148,7 @@ The following patches are needed even though SSL is excluded in the `gn gen` bui
   # if (is_nacl) {
   if (true) {
   ```
-- Edit *rtc_base\BUILD.gn*:\
+- Edit *rtc_base\BUILD.gn*:
   Change:
   ```
   if (rtc_build_ssl) {
@@ -159,32 +162,42 @@ The following patches are needed even though SSL is excluded in the `gn gen` bui
   } else {
   ```
 
-Comment out the following line in `<WEBRTC_CHECKOUT_DIR>/src/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.c`:
-```
-#error Only BoringSSL is supported with SCTP_USE_OPENSSL_RAND
-```
+- Comment out the following line in `<WEBRTC_CHECKOUT_DIR>/src/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.c`:
+  ```
+  #error Only BoringSSL is supported with SCTP_USE_OPENSSL_RAND
+  ```
 
-#### 8. Set Up OpenSSL
+#### 7. Set Up OpenSSL
 
 Copy the *openssl* directory from `<UNREAL_ENGINE_5.1.1_DIR>\Engine\Source\ThirdParty\OpenSSL\1.1.1n\include\Win64\VS2015` to the following locations:
 - `<WEBRTC_CHECKOUT_DIR>\src\third_party\libsrtp\crypto\include`
 - `<WEBRTC_CHECKOUT_DIR>\src\third_party\usrsctp\usrsctplib\usrsctplib`
 
-#### 9. Enable ffmpeg unsafe atomics (only for H264 software codec)
+#### 8. Enable ffmpeg unsafe atomics (only for H264 software codec)
 
 Go src\third_party\ffmpeg\ffmpeg_options.gni and set `ffmpeg_use_unsafe_atomics` to true
 
-
 Provide `<UNREAL_ENGINE_5.1.1_DIR>\Engine\Source\ThirdParty\OpenSSL\1.1.1n\include\Win64\VS2015` when generating project files & compiling (next section).
+
+#### 9. Disable obsolete codecs in ffmpeg module
+
+Comment out the following lines in `libavcodec/pcm.c`:
+```
+-PCM_CODEC  (PCM_VIDC,         AV_SAMPLE_FMT_S16, pcm_vidc,         "PCM Archimedes VIDC");
+-PCM_DECODER(PCM_SGA,          AV_SAMPLE_FMT_U8,  pcm_sga,          "PCM SGA");
+INIT_ONCE(VIDC,  vidc)
+```
+
+and all usages of `ff_theora_decoder` and `ff_vp3_decoder` 
 
 
 # Generating project files & Compiling
 
 
+Compiling via Visual Studio 2019:
 ```
-// Compile via VS 2019 
 // Working solution for M96
-// Note: h264 codec is not needed as Unreal provides custom one (nvenc)
+// Note: h264 codec is not compiled as Unreal provides custom one (nvenc)
 // non-clang is not tested!
 // provide path to Unreal Engine 5.1 OpenSSL includes!
 // Add PublicDefinitions.Add("DISABLE_H265=1") to WebRTC.Build.cs (Unreal Engine codebase)
@@ -204,7 +217,7 @@ Hint: Main cause of runtime errors (i.e. copy contructor/asssignment operator) -
 
 
 
-# Work log
+# Work log (can be used as a reference)
 
 
 gn gen --ide=vs2019 out/Release_4664_no_opus --args="use_rtti=true enable_iterator_debugging=true is_clang=false use_custom_libcxx=false libcxx_is_shared=true enable_libaom=false rtc_build_tools=false rtc_include_tests=false rtc_build_examples=false rtc_build_ssl=false is_debug=false rtc_enable_protobuf=false use_lld=false rtc_include_internal_audio_device=false target_cpu=\"x64\" rtc_ssl_root=\"E:\mawari_workspace\UnrealEngine-5.1.1-release\Engine\Source\ThirdParty\OpenSSL\1.1.1n\include\Win64\VS2015\""
@@ -276,5 +289,3 @@ E:\mawari_workspace\depot_tools\webrtc_checkout\src>gn gen out/release_test --fi
 #### M96 (clang true)
 
 gn gen out/release_test --filters=//:webrtc  --args="is_component_build=false rtc_include_tests=false rtc_include_ilbc=false use_rtti=true rtc_use_h264=true proprietary_codecs=true  enable_google_benchmarks=false treat_warnings_as_errors=false enable_iterator_debugging=false use_custom_libcxx=false libcxx_is_shared=true rtc_build_ssl=false is_debug=false rtc_enable_protobuf=false rtc_build_examples=false use_lld=false rtc_include_internal_audio_device=false rtc_builtin_ssl_root_certificates=false enable_libaom=false target_cpu=\"x64\" rtc_ssl_root=\"E:\mawari_workspace\UnrealEngine-5.1.1-release\Engine\Source\ThirdParty\OpenSSL\1.1.1n\include\Win64\VS2015\""
-
-
