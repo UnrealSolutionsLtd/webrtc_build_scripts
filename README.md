@@ -186,7 +186,7 @@ Copy the *openssl* directory from `<UNREAL_ENGINE_5.1.1_DIR>\Engine\Source\Third
 
 Provide `<UNREAL_ENGINE_5.1.1_DIR>\Engine\Source\ThirdParty\OpenSSL\1.1.1n\include\Win64\VS2015` when generating project files & compiling (next section).
 
-### H264 Codec (Software only)
+### H264 Codec (Optional, software codec)
 
 #### Enable ffmpeg unsafe atomics
 
