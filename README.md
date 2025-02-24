@@ -45,6 +45,9 @@ gclient runhooks
 
 Define environment variable: `SET DEPOT_TOOLS_WIN_TOOLCHAIN=0`
 
+UPD: Extremely applicat to M109:
+```https://stackoverflow.com/questions/63281661/how-to-avoid-sub-library-aggregation-during-webrtc-compilation-on-windows```
+
 To generate standalone webrtc.lib (won't be compatible with Unreal!):
 ```gn gen  --ide=vs2019 out/release_no_h264 --args="target_winuwp_family=\"desktop\" is_component_build=false rtc_include_tests=false rtc_use_h264=false use_rtti=true enable_google_benchmarks=false rtc_disable_logging=true treat_warnings_as_errors=false is_clang=true rtc_include_ilbc=false use_custom_libcxx=false is_debug=false rtc_enable_protobuf=false rtc_build_examples=false use_lld=false rtc_include_internal_audio_device=false enable_libaom=false target_cpu=\"x64\""```
 
