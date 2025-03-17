@@ -1,4 +1,6 @@
-# Windows-specific WebRTC build instructions
+# Windows-specific WebRTC build instructions for Unreal Engine
+
+Please contact webrtc@unrealsolutions.com if you have any questions or create a new issue.
 
 ## Install Ninja
 Download binaries: https://github.com/ninja-build/ninja and add them to PATH!
